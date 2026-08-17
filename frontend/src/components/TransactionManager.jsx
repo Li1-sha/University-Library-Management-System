@@ -19,29 +19,32 @@ function TransactionManager() {
       const res = await api.get('/books');
       setBooks(res.data);
     } catch (err) {
-      console.error(err);
+      console.error('Error fetching books:', err);
     }
   };
+
   const fetchMembers = async () => {
     try {
       const res = await api.get('/members');
       setMembers(res.data);
     } catch (err) {
-      console.error(err);
+      console.error('Error fetching members:', err);
     }
   };
+
   const fetchTransactions = async () => {
     try {
       const res = await api.get('/transactions');
       setTransactions(res.data);
     } catch (err) {
-      console.error(err);
+      console.error('Error fetching transactions:', err);
     }
   };
 
   const handleBorrowChange = (e) => {
     setBorrowForm({ ...borrowForm, [e.target.name]: e.target.value });
   };
+
   const handleReturnChange = (e) => {
     setReturnForm({ transactionId: e.target.value });
   };
@@ -52,7 +55,7 @@ function TransactionManager() {
       await api.post('/transactions/borrow', borrowForm);
       setBorrowForm({ bookId: '', memberId: '' });
       fetchTransactions();
-      fetchBooks(); // refresh available counts
+      fetchBooks();
     } catch (err) {
       alert(err.response?.data?.error || 'Error borrowing book');
     }
@@ -71,13 +74,22 @@ function TransactionManager() {
     }
   };
 
+  const handlePayFine = async (transactionId, fine) => {
+    if (!window.confirm(`Pay ${fine} OMR fine?`)) return;
+    try {
+      await api.put(`/transactions/${transactionId}/pay-fine`);
+      fetchTransactions();
+    } catch (err) {
+      alert(err.response?.data?.error || 'Error paying fine');
+    }
+  };
+
   return (
     <div>
       <h2>Borrow / Return</h2>
 
-      <div style={{ display: 'flex', gap: '40px', flexWrap: 'wrap' }}>
-        {/* Borrow Form */}
-        <div style={{ border: '1px solid #ccc', padding: '20px', flex: 1 }}>
+      <div className="flex-row">
+        <div className="flex-1" style={{ border: '1px solid #e9edf4', padding: '20px', borderRadius: '16px' }}>
           <h3>📤 Borrow a Book</h3>
           <form onSubmit={handleBorrow}>
             <select name="bookId" value={borrowForm.bookId} onChange={handleBorrowChange} required>
@@ -88,7 +100,6 @@ function TransactionManager() {
                 </option>
               ))}
             </select>
-            <br /><br />
             <select name="memberId" value={borrowForm.memberId} onChange={handleBorrowChange} required>
               <option value="">Select Member</option>
               {members.map((m) => (
@@ -97,13 +108,11 @@ function TransactionManager() {
                 </option>
               ))}
             </select>
-            <br /><br />
             <button type="submit">Borrow</button>
           </form>
         </div>
 
-        {/* Return Form */}
-        <div style={{ border: '1px solid #ccc', padding: '20px', flex: 1 }}>
+        <div className="flex-1" style={{ border: '1px solid #e9edf4', padding: '20px', borderRadius: '16px' }}>
           <h3>📥 Return a Book</h3>
           <form onSubmit={handleReturn}>
             <select value={returnForm.transactionId} onChange={handleReturnChange} required>
@@ -114,14 +123,13 @@ function TransactionManager() {
                 </option>
               ))}
             </select>
-            <br /><br />
             <button type="submit">Return</button>
           </form>
         </div>
       </div>
 
       <h3 style={{ marginTop: '30px' }}>Transaction History</h3>
-      <table border="1" cellPadding="8" style={{ width: '100%', borderCollapse: 'collapse' }}>
+      <table>
         <thead>
           <tr>
             <th>ID</th>
@@ -130,8 +138,9 @@ function TransactionManager() {
             <th>Borrowed</th>
             <th>Due</th>
             <th>Returned</th>
-            <th>Fine ($)</th>
+            <th>Fine (OMR)</th>   {/* changed */}
             <th>Status</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -143,8 +152,22 @@ function TransactionManager() {
               <td>{t.borrowDate}</td>
               <td>{t.dueDate}</td>
               <td>{t.returnDate || '-'}</td>
-              <td>{t.fine}</td>
+              <td>{t.fine}</td>   {/* no $, just number */}
               <td>{t.status}</td>
+              <td>
+                {t.status === 'returned' && t.fine > 0 && (
+                  <button
+                    className="success"
+                    onClick={() => handlePayFine(t.id, t.fine)}
+                    style={{ fontSize: '0.8rem', padding: '4px 12px' }}
+                  >
+                    Pay {t.fine} OMR   {/* changed */}
+                  </button>
+                )}
+                {t.status === 'returned' && t.fine === 0 && (
+                  <span style={{ color: '#10b981', fontSize: '0.8rem' }}>✓ Paid</span>
+                )}
+              </td>
             </tr>
           ))}
         </tbody>

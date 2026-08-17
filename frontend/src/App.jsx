@@ -8,15 +8,14 @@ import TransactionManager from './components/TransactionManager';
 function App() {
   return (
     <BrowserRouter>
-      <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-        <h1>📚 University Library System</h1>
-        <nav style={{ marginBottom: '20px', display: 'flex', gap: '15px' }}>
+      <div className="container">
+        <h1>📚 <span>University</span> Library System</h1>
+        <nav>
           <Link to="/">Dashboard</Link>
           <Link to="/books">Books</Link>
           <Link to="/members">Members</Link>
           <Link to="/transactions">Borrow / Return</Link>
         </nav>
-        <hr />
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/books" element={<BookList />} />

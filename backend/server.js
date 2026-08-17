@@ -2,11 +2,11 @@ const express = require('express');
 const cors = require('cors');
 const { syncDatabase } = require('./models/index');
 
-// Import routes
 const bookRoutes = require('./routes/bookRoutes');
 const memberRoutes = require('./routes/memberRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
 const statsRoutes = require('./routes/statsRoutes');
+const seedRoutes = require('./routes/seedRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -20,6 +20,7 @@ app.use('/api/books', bookRoutes);
 app.use('/api/members', memberRoutes);
 app.use('/api/transactions', transactionRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/seed', seedRoutes); 
 
 // Root
 app.get('/', (req, res) => {
