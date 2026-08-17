@@ -185,10 +185,8 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## 📧 Contact
 
-Project maintained by [Your Name](mailto:youremail@example.com).  
+Project maintained by [Shahad Al Harthy](mailto:shahadthy15@gmail.com).  
 
 Feel free to reach out with questions or feedback.
 
 ---
-
-**Made with ❤️ for the Omani academic community 🇴🇲**
