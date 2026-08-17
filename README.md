@@ -40,7 +40,7 @@
 
 ### Clone the Repository
 ```bash
-git clone https://github.com/yourusername/University-Library-Management-System.git
+git clone https://github.com/Li1-sha/University-Library-Management-System.git
 cd University-Library-Management-System
 ```
 
